@@ -3,7 +3,7 @@ from django.shortcuts import render
 
 def index(request):
  name = request.GET.get("name") or "world!"
- return render(request, "bookmodule/index.html" , {"name": name})
+ return render(request, "index.html" , {"name": name})
 
 def index2(request, val1 = 0): #add the view function (index2)
  return HttpResponse("value1 = "+str(val1))
@@ -16,4 +16,16 @@ def viewbook(request, bookId):
   if book1['id'] == bookId: targetBook = book1 
   if book2['id'] == bookId: targetBook = book2 
   context = {'book':targetBook} # book is the variable name accessible by the template 
-  return render(request, 'bookmodule/show.html', context) 
+  return render(request, 'show.html', context) 
+
+def links(request):
+ return render(request, "links.html")
+
+def formatting(request):
+ return render(request,"formatting.html")
+
+def listing(request):
+ return render(request, "listing.html")
+
+def tables(request):
+ return render(request, "table.html")
