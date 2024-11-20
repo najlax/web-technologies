@@ -1,0 +1,29 @@
+.ex{
+    background-color: bisque;
+    color: green;
+}
+
+.list{
+    background-color:blue;
+    color: white;
+}
+
+#tb1 th, td {
+    border:1px solid;
+}
+
+/* #tb2 {
+    border: 1px solid;
+} */
+#tb2 th,td{
+    border:1px solid;
+}
+#d1{
+    justify-items: center;
+}
+
+#d2{
+    justify-items: center;
+}
+
+
