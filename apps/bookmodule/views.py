@@ -1,5 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import render
+from .models import Book 
+from django.db.models import Q 
+from django.db.models import Sum, Avg , Min, Max
 
 def index(request):
  name = request.GET.get("name") or "world!"
@@ -7,6 +10,9 @@ def index(request):
 
 def index2(request, val1 = 0): #add the view function (index2)
  return HttpResponse("value1 = "+str(val1))
+
+mybook = Book(title = 'Continuous Delivery', author = 'J.Humble and D. Farley', edition = 1)
+
 
 def viewbook(request, bookId):
   # assume that we have the following books somewhere (e.g. database) 
@@ -33,8 +39,8 @@ def tables(request):
 def index(request):
  return render(request,"bookmodule/index.html")
 
-def list_books(request):
- return render(request,"bookmodule/list_books.html")
+def books(request):
+ return render(request,"bookmodule/bookList.html")
 
 def viewbook(request):
  return render(request,"bookmodule/one_book.html")
@@ -46,11 +52,6 @@ def search(request):
  return render(request, "bookmodule/search.html")
 
 
-def __getBooksList(): 
-  book1 = {'id':12344321, 'title':'Continuous Delivery', 'author':'J.Humble and D. Farley'} 
-  book2 = {'id':56788765,'title':'Reversing: Secrets of Reverse Engineering', 'author':'E. Eilam'} 
-  book3 = {'id':43211234, 'title':'The Hundred-Page Machine Learning Book', 'author':'Andriy Burkov'} 
-  return [book1, book2, book3] 
 
   
 
@@ -75,3 +76,41 @@ def search_books(request):
 
         return render(request, 'bookmodule/bookList.html', {'books': filtered_books})
     return render(request, 'bookmodule/search.html')
+
+
+def simple_query(request):
+  mybooks =Book.objects.filter(title__icontains='and') # <- multiple objects
+  return render(request, 'bookmodule/bookList.html', {'books':mybooks})
+
+
+def lookup_query(request): 
+    mybooks=books=Book.objects.filter(author__isnull = False).filter(title__icontains='and').filter(edition__gte = 2).exclude(price__lte = 100)[:10] 
+    if len(mybooks)>=1: 
+     return render(request, 'bookmodule/bookList.html', {'books':mybooks}) 
+    else: 
+     return render(request, 'bookmodule/index.html') 
+    
+def lab8t1(request):
+  mybooks=Book.objects.filter(Q(price__lte=50))
+  return render(request,'bookmodule/bookList.html', {'books':mybooks})
+
+def lab8t2(request):
+  mybooks=Book.objects.filter(Q(edition__gt=2) & (Q(title__contains="qu") | Q(author__contains="qu")))
+  return render(request, 'bookmodule/bookList.html', {'books': mybooks})
+        
+def lab8t3(request):
+  mybooks=Book.objects.filter(~Q(edition__gt=2) & (~Q(title__contains="qu") | ~Q(author__contains="qu")))
+  return render(request, 'bookmodule/bookList.html', {'books': mybooks})
+
+def lab8t4(request):
+  mybooks=Book.objects.all().order_by('title')
+  return render(request, 'bookmodule/bookList.html', {'books': mybooks})
+
+def lab8t5(request):
+  mybooks=Book.objects.all().count()
+  totalprice=Book.objects.aaggregate(total=Sum('price'))
+  avgprice=Book.objects.aaggregate(averagep=Avg('price'))
+  Minprice=Book.objects.aaggregate(min=Min('price'))
+  Maxprice=Book.objects.aaggregate(max=Max('price'))
+
+

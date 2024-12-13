@@ -1,0 +1,10 @@
+{% extends "layouts/base.html" %}
+
+{%block content%}
+{% for s in studetns %}
+
+    <h5>{{s.city}}</h5>
+    <h5>{{s.num_students}}</h5>
+{% endfor %}
+
+{%endblock %}
